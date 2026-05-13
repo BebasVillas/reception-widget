@@ -543,12 +543,11 @@ async function generatePayment(){
   btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2"></i> Generating...';
   try{
     const payload={amount:finalTotal,description:desc,externalId:'BEBAS-'+Date.now(),payerEmail:email,payerName:name,payerPhone:phone||''};
-    const form=new FormData();
-    form.append('payload',JSON.stringify(payload));
-    const res=await fetch(scriptUrl,{method:'POST',body:form,redirect:'follow'});
+    const url=scriptUrl+'?data='+encodeURIComponent(JSON.stringify(payload));
+    const res=await fetch(url,{method:'GET',redirect:'follow'});
     const text=await res.text();
     let data;
-    try{data=JSON.parse(text);}catch(pe){throw new Error('Invalid response from Apps Script: '+text.substring(0,100));}
+    try{data=JSON.parse(text);}catch(pe){throw new Error('Invalid response: '+text.substring(0,100));}
     if(data.error)throw new Error(data.error);
     const link=data.invoice_url||data.url||data.checkout_url;
     if(!link)throw new Error('No payment URL returned from Xendit');
