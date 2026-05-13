@@ -342,16 +342,9 @@ function calcBeat(){
   const warn=document.getElementById('beat-warning');
   const valEl=document.getElementById('opt-beat-val');
   if(!val||isNaN(val)){valEl.textContent='—';valEl.style.color='#888';warn.style.display='none';updateSummaryBar();return;}
-  const floor=_s.bkMinTotal||0;
   const offer=Math.round(val*0.95);
-  if(offer<floor){
-    valEl.textContent='Below floor';valEl.style.color='#C0392B';
-    warn.textContent='Cannot go below Booking.com min ('+fmt(floor)+'). Minimum offer: '+fmt(floor);
-    warn.style.display='block';
-  } else {
-    valEl.textContent=fmt(offer);valEl.style.color='#1D9E75';
-    warn.style.display='none';
-  }
+  valEl.textContent=fmt(offer);valEl.style.color='#1D9E75';
+  warn.style.display='none';
   if(_selectedMode==='beat'){updateSummaryBar();updateGenerateBtn();}
 }
 
@@ -368,8 +361,7 @@ function getFinalAmount(){
   if(_selectedMode==='beat'){
     const val=parseFloat(document.getElementById('comp-input').value);
     if(!val||isNaN(val))return null;
-    const offer=Math.round(val*0.95);
-    return offer>=(_s.bkMinTotal||0)?offer:null;
+    return Math.round(val*0.95);
   }
   if(_selectedMode==='custom'){
     const val=parseFloat(document.getElementById('custom-input').value);
