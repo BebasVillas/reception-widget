@@ -792,8 +792,10 @@ function sendWhatsApp(){
   const amount=document.getElementById('s-total').textContent;
   const villa=_s.r?_s.r.display:'';
   const dates=document.getElementById('s-checkin').textContent+' → '+document.getElementById('s-checkout').textContent;
+  const phone=document.getElementById('g-phone').value.trim().replace(/[^0-9+]/g,'');
   const msg=buildWhatsAppMsg(link,guest,amount,villa,dates);
-  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+  const url=phone?'https://wa.me/'+phone.replace('+','')+'?text='+encodeURIComponent(msg):'https://wa.me/?text='+encodeURIComponent(msg);
+  window.open(url,'_blank');
 }
 
 function copySummary(){
