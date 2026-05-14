@@ -691,6 +691,7 @@ async function generatePayment(){
     saveToHistory({
       villa:_s.r?_s.r.display:'',
       guest:name,
+      phone:phone.replace(/[^0-9]/g,''),
       dates:fmtDate(_s.ci)+' → '+fmtDate(_s.co),
       amount:fmt(finalTotal),
       link:link,
@@ -763,7 +764,9 @@ function sendHistoryWhatsApp(i){
     const h=JSON.parse(localStorage.getItem('bebas_link_history')||'[]');
     if(h[i]){
       const msg=buildWhatsAppMsg(h[i].link,h[i].guest,h[i].amount,h[i].villa,h[i].dates||h[i].desc);
-      window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+      const phone=h[i].phone||'';
+      const url=phone?'https://wa.me/'+phone+'?text='+encodeURIComponent(msg):'https://wa.me/?text='+encodeURIComponent(msg);
+      window.open(url,'_blank');
     }
   }catch(e){}
 }
@@ -796,6 +799,7 @@ function sendWhatsApp(){
   const phone=rawPhone.replace(/[^0-9]/g,'');
   const msg=buildWhatsAppMsg(link,guest,amount,villa,dates);
   const url=phone?'https://wa.me/'+phone+'?text='+encodeURIComponent(msg):'https://wa.me/?text='+encodeURIComponent(msg);
+  console.log('Phone raw:',rawPhone,'Phone clean:',phone,'URL:',url);
   window.open(url,'_blank');
 }
 
@@ -859,6 +863,7 @@ async function generateExpress(){
     saveToHistory({
       villa:'',
       guest:expName!=='Guest'?expName:'',
+      phone:expPhone.replace(/[^0-9]/g,''),
       desc:desc,
       amount:fmt(total),
       link:link,
