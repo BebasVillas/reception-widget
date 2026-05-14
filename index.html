@@ -108,6 +108,18 @@ textarea{height:64px;padding:8px 10px;resize:none}
 .express-result-amount{font-size:18px;font-weight:500;color:#1D9E75}
 .express-link-row{display:flex;align-items:center;gap:8px;margin-top:8px}
 .express-link-result{background:#E8F7EF;border:1px solid #9FE1CB;border-radius:8px;padding:.75rem 1rem;margin-top:10px;display:none}
+.btn-whatsapp{height:42px;padding:0 20px;background:#25D366;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.btn-whatsapp:hover{background:#1DA851}
+.history-card{background:#fff;border:0.5px solid #E5E3DC;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.history-empty{text-align:center;padding:1.5rem;color:#aaa;font-size:13px}
+.history-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #F0EEE8}
+.history-item:last-child{border-bottom:none}
+.history-icon{width:32px;height:32px;border-radius:8px;background:#F8F7F4;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.history-info{flex:1;min-width:0}
+.history-main{font-size:13px;font-weight:500;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history-sub{font-size:11px;color:#888;margin-top:2px}
+.history-amount{font-size:13px;font-weight:500;color:#1D9E75;flex-shrink:0}
+.history-actions{display:flex;gap:6px;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -292,6 +304,7 @@ textarea{height:64px;padding:8px 10px;resize:none}
     <div class="link-row">
       <span class="link-val" id="payment-link-val">—</span>
       <button class="btn-copy" onclick="copyLink()"><i class="ti ti-copy"></i> Copy</button>
+      <button class="btn-whatsapp" id="btn-whatsapp" onclick="sendWhatsApp()"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
     </div>
   </div>
   <div class="summary-box">
@@ -317,6 +330,18 @@ textarea{height:64px;padding:8px 10px;resize:none}
   </div>
 </div>
 </div>
+</div>
+
+<!-- Link history -->
+<div class="history-card" id="history-card" style="display:none">
+  <div class="step-header" style="margin-bottom:12px">
+    <div class="step-num" style="background:#F8F7F4"><i class="ti ti-history" style="font-size:13px;color:#888"></i></div>
+    <div class="step-label">Recent payment links</div>
+    <button class="btn-copy" onclick="clearHistory()" style="margin-left:auto;font-size:11px">Clear</button>
+  </div>
+  <div id="history-list"><div class="history-empty">No links generated yet</div></div>
+</div>
+
 </div>
 
 <script>
@@ -389,6 +414,7 @@ function saveScriptUrl(){}
 window.addEventListener('DOMContentLoaded',()=>{
   const url=document.getElementById('apps-script-url').value;
   if(url) { loadRates(url); updateGenerateBtn(); }
+  renderHistory();
 });
 
 // Calculate night-by-night breakdown
@@ -662,6 +688,14 @@ async function generatePayment(){
     document.getElementById('s-link').textContent=link;
     document.getElementById('payment-result-section').style.display='block';
     document.getElementById('payment-result-section').scrollIntoView({behavior:'smooth',block:'start'});
+    saveToHistory({
+      villa:_s.r?_s.r.display:'',
+      guest:name,
+      dates:fmtDate(_s.ci)+' → '+fmtDate(_s.co),
+      amount:fmt(finalTotal),
+      link:link,
+      time:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})
+    });
   }catch(e){
     errBox.textContent='Error: '+e.message;
     errBox.style.display='block';
@@ -677,6 +711,91 @@ function copyLink(){
     setTimeout(()=>{btn.innerHTML='<i class="ti ti-copy"></i> Copy';},2000);
   });
 }
+// History management
+function saveToHistory(entry){
+  try{
+    let h=JSON.parse(localStorage.getItem('bebas_link_history')||'[]');
+    h.unshift(entry);
+    if(h.length>10)h=h.slice(0,10);
+    localStorage.setItem('bebas_link_history',JSON.stringify(h));
+    renderHistory();
+  }catch(e){}
+}
+
+function renderHistory(){
+  try{
+    const h=JSON.parse(localStorage.getItem('bebas_link_history')||'[]');
+    const card=document.getElementById('history-card');
+    const list=document.getElementById('history-list');
+    if(!h.length){card.style.display='none';return;}
+    card.style.display='block';
+    list.innerHTML=h.map((e,i)=>`
+      <div class="history-item">
+        <div class="history-icon"><i class="ti ti-link" style="color:#1D9E75"></i></div>
+        <div class="history-info">
+          <div class="history-main">${e.villa||'Express'} &middot; ${e.guest||'Guest'}</div>
+          <div class="history-sub">${e.dates||e.desc||''} &middot; ${e.time}</div>
+        </div>
+        <div class="history-amount">${e.amount}</div>
+        <div class="history-actions">
+          <button class="btn-copy" onclick="copyHistoryLink(${i})"><i class="ti ti-copy"></i></button>
+          <button class="btn-whatsapp" style="height:34px;padding:0 10px" onclick="sendHistoryWhatsApp(${i})"><i class="ti ti-brand-whatsapp"></i></button>
+        </div>
+      </div>`).join('');
+  }catch(e){}
+}
+
+function clearHistory(){
+  localStorage.removeItem('bebas_link_history');
+  document.getElementById('history-card').style.display='none';
+  document.getElementById('history-list').innerHTML='<div class="history-empty">No links generated yet</div>';
+}
+
+function copyHistoryLink(i){
+  try{
+    const h=JSON.parse(localStorage.getItem('bebas_link_history')||'[]');
+    if(h[i])navigator.clipboard.writeText(h[i].link);
+  }catch(e){}
+}
+
+function sendHistoryWhatsApp(i){
+  try{
+    const h=JSON.parse(localStorage.getItem('bebas_link_history')||'[]');
+    if(h[i]){
+      const msg=buildWhatsAppMsg(h[i].link,h[i].guest,h[i].amount,h[i].villa,h[i].dates||h[i].desc);
+      window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+    }
+  }catch(e){}
+}
+
+function buildWhatsAppMsg(link,guest,amount,villa,dates){
+  return `Dear ${guest||''},
+
+Thank you for choosing Bebas Villas!
+
+Here is your payment link${villa?' for '+villa:''}${dates?' ('+dates+')':''}:
+
+${link}
+
+Amount: ${amount}
+Valid for 12 hours.
+
+Please do not hesitate to contact us if you have any questions.
+
+Warm regards,
+Bebas Villas Team`;
+}
+
+function sendWhatsApp(){
+  const link=document.getElementById('payment-link-val').textContent;
+  const guest=document.getElementById('g-name').value.trim()||'Guest';
+  const amount=document.getElementById('s-total').textContent;
+  const villa=_s.r?_s.r.display:'';
+  const dates=document.getElementById('s-checkin').textContent+' → '+document.getElementById('s-checkout').textContent;
+  const msg=buildWhatsAppMsg(link,guest,amount,villa,dates);
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
 function copySummary(){
   const fields=['villa','checkin','checkout','nights','season','name','email','phone','guests','total','remarks','link'];
   const labels={villa:'Villa',checkin:'Check-in',checkout:'Check-out',nights:'Nights',season:'Season(s)',name:'Guest name',email:'Email',phone:'Phone',guests:'Guests',total:'Total',remarks:'Remarks',link:'Payment link'};
@@ -734,6 +853,14 @@ async function generateExpress(){
     const exp=new Date(Date.now()+12*3600000);
     document.getElementById('exp-link-expiry').textContent='Expires '+exp.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
     document.getElementById('exp-link-result').style.display='block';
+    saveToHistory({
+      villa:'',
+      guest:expName!=='Guest'?expName:'',
+      desc:desc,
+      amount:fmt(total),
+      link:link,
+      time:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})
+    });
   }catch(e){
     errBox.textContent='Error: '+e.message;errBox.style.display='block';
   }
