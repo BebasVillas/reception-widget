@@ -9,7 +9,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;font-size:14px;background:#F8F7F4;color:#1a1a1a;min-height:100vh;padding:2rem 1rem}
-.container{max-width:820px;margin:0 auto}
+.container{max-width:860px;margin:0 auto}
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid #E5E3DC}
 .header-title{font-size:18px;font-weight:500}
 .header-sub{font-size:12px;color:#888;margin-top:2px}
@@ -21,7 +21,7 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;background:#F8F7F4;color:#1
 .field label{font-size:12px;color:#888}
 select,input[type=date],input[type=number],input[type=text],input[type=email],input[type=tel],textarea{width:100%;height:38px;padding:0 10px;border:1px solid #E5E3DC;border-radius:8px;background:#fff;color:#1a1a1a;font-size:13px;font-family:'DM Sans',sans-serif}
 select:focus,input:focus,textarea:focus{outline:none;border-color:#1D9E75;box-shadow:0 0 0 3px rgba(29,158,117,.1)}
-input.err{border-color:#C0392B;box-shadow:0 0 0 3px rgba(192,57,43,.1)}
+input.err{border-color:#C0392B;}
 textarea{height:64px;padding:8px 10px;resize:none}
 .step-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .step-num{width:24px;height:24px;border-radius:50%;background:#F8F7F4;border:1px solid #E5E3DC;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#888;flex-shrink:0}
@@ -42,24 +42,31 @@ textarea{height:64px;padding:8px 10px;resize:none}
 .ch-sub{font-size:11px;color:#888}
 .best-badge{font-size:10px;font-weight:500;background:#E8F7EF;color:#0F6E56;padding:2px 8px;border-radius:20px;margin-left:auto;white-space:nowrap}
 .price-total{font-size:21px;font-weight:500;margin-bottom:1px}
-.price-night{font-size:11px;color:#888;margin-bottom:10px}
+.price-night{font-size:11px;color:#888;margin-bottom:8px}
 .dr{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #F0EEE8;color:#888}
 .dr:last-child{border-bottom:none}
 .dv{font-weight:500;color:#1a1a1a}
 .dv-g{font-weight:500;color:#0F6E56}
 .dv-r{font-weight:500;color:#C0392B}
+.night-detail{margin-top:8px;border-top:1px solid #F0EEE8;padding-top:8px}
+.night-detail-title{font-size:11px;font-weight:500;color:#888;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.night-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:3px 0;color:#888;border-bottom:1px solid #F8F7F4}
+.night-row:last-child{border-bottom:none}
+.night-date{flex:1}
+.night-season{margin:0 6px}
+.night-price{font-weight:500;color:#1a1a1a}
+.night-total-row{display:flex;justify-content:space-between;font-size:13px;font-weight:500;padding:6px 0 0;color:#1a1a1a;border-top:1px solid #E5E3DC;margin-top:4px}
 .empty{text-align:center;padding:2rem;color:#aaa;font-size:13px}
 .script-config{background:#EAF3FF;border:1px solid #B5D4F4;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem}
 .script-label{font-size:13px;font-weight:500;color:#185FA5;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .script-saved{font-size:11px;color:#0F6E56;margin-top:6px;display:none;align-items:center;gap:4px}
-
-/* Amount selector */
+.loading-rates{font-size:12px;color:#888;display:flex;align-items:center;gap:6px;margin-top:6px}
 .amount-selector{margin-bottom:1rem}
 .amount-option{border:1px solid #E5E3DC;border-radius:10px;padding:1rem;margin-bottom:8px;cursor:pointer;transition:border-color .15s,background .15s}
 .amount-option:hover{border-color:#aaa}
 .amount-option.selected{border:2px solid #1D9E75;background:#F5FBF8}
 .ao-header{display:flex;align-items:center;gap:10px}
-.ao-radio{width:18px;height:18px;border-radius:50%;border:2px solid #E5E3DC;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:border-color .15s}
+.ao-radio{width:18px;height:18px;border-radius:50%;border:2px solid #E5E3DC;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .amount-option.selected .ao-radio{border-color:#1D9E75}
 .ao-radio-dot{width:8px;height:8px;border-radius:50%;background:#1D9E75;display:none}
 .amount-option.selected .ao-radio-dot{display:block}
@@ -67,18 +74,12 @@ textarea{height:64px;padding:8px 10px;resize:none}
 .ao-amount{font-size:15px;font-weight:500;color:#1D9E75}
 .ao-sub{font-size:12px;color:#888;margin-top:4px;padding-left:28px}
 .ao-input{margin-top:10px;padding-left:28px}
-.ao-input input{max-width:300px}
-.ao-warning{font-size:12px;color:#C0392B;margin-top:6px;padding-left:28px;display:none}
-
-/* Payment summary bar */
+.ao-input input{max-width:300px;height:36px}
 .pay-summary{background:#1D9E75;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .pay-summary-left{color:#fff}
 .pay-summary-label{font-size:12px;opacity:.8;margin-bottom:2px}
 .pay-summary-amount{font-size:24px;font-weight:500}
 .pay-summary-sub{font-size:11px;opacity:.7;margin-top:2px}
-.pay-summary-right{}
-
-/* Buttons */
 .btn-primary{height:42px;padding:0 22px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-family:'DM Sans',sans-serif;white-space:nowrap}
 .btn-primary:hover{background:#0F6E56}
 .btn-primary:disabled{background:#E5E3DC;color:#aaa;cursor:not-allowed}
@@ -86,8 +87,6 @@ textarea{height:64px;padding:8px 10px;resize:none}
 .btn-primary.white:hover{background:#E8F7EF}
 .btn-copy{height:34px;padding:0 12px;background:#F8F7F4;color:#1a1a1a;border:1px solid #E5E3DC;border-radius:8px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif}
 .btn-copy:hover{background:#fff}
-
-/* Payment result */
 .payment-result{background:#E8F7EF;border:1px solid #9FE1CB;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem}
 .link-row{display:flex;align-items:center;gap:8px;margin-top:8px}
 .link-val{font-size:12px;color:#0F6E56;word-break:break-all;flex:1;background:#fff;border:1px solid #9FE1CB;border-radius:8px;padding:6px 10px}
@@ -97,11 +96,11 @@ textarea{height:64px;padding:8px 10px;resize:none}
 .sv{color:#1a1a1a;font-weight:500;text-align:right;max-width:65%;word-break:break-all}
 .error-box{background:#FDECEA;border:1px solid #F5A8A8;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:#C0392B;margin-top:10px;display:none}
 .field-err{font-size:11px;color:#C0392B;margin-top:3px;display:none}
+.season-legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 </style>
 </head>
 <body>
 <div class="container">
-
 <div class="header">
   <div>
     <div class="header-title">Reception Pricing Tool</div>
@@ -113,10 +112,10 @@ textarea{height:64px;padding:8px 10px;resize:none}
 <div class="script-config">
   <div class="script-label"><i class="ti ti-settings" style="font-size:16px"></i>Google Apps Script URL</div>
   <input type="text" id="apps-script-url" placeholder="https://script.google.com/macros/s/YOUR_ID/exec" oninput="saveScriptUrl()">
-  <div class="script-saved" id="script-saved"><i class="ti ti-circle-check" style="font-size:13px"></i>&nbsp;URL saved — payment generation enabled</div>
+  <div class="script-saved" id="script-saved"><i class="ti ti-circle-check" style="font-size:13px"></i>&nbsp;URL saved</div>
+  <div class="loading-rates" id="loading-rates" style="display:none"><i class="ti ti-loader-2" style="font-size:14px"></i> Loading rates from Google Sheet...</div>
 </div>
 
-<!-- STEP 1 -->
 <div class="card">
   <div class="step-header"><div class="step-num active">1</div><div class="step-label">Booking details</div></div>
   <div class="grid3" style="margin-bottom:12px">
@@ -143,7 +142,6 @@ textarea{height:64px;padding:8px 10px;resize:none}
   <div id="main-output"><div class="empty"><i class="ti ti-home" style="font-size:28px;display:block;margin-bottom:8px"></i>Select a villa and dates to see pricing</div></div>
 </div>
 
-<!-- STEP 2 -->
 <div id="guest-section" style="display:none">
 <div class="card">
   <div class="step-header"><div class="step-num active">2</div><div class="step-label">Guest information</div></div>
@@ -176,20 +174,17 @@ textarea{height:64px;padding:8px 10px;resize:none}
   </div>
 </div>
 
-<!-- STEP 3 -->
 <div class="card">
   <div class="step-header"><div class="step-num active">3</div><div class="step-label">Payment amount</div></div>
-  <div class="amount-selector" id="amount-selector">
-
+  <div class="amount-selector">
     <div class="amount-option selected" id="opt-direct" onclick="selectAmount('direct')">
       <div class="ao-header">
         <div class="ao-radio"><div class="ao-radio-dot"></div></div>
         <div class="ao-label">Direct rate (Cloudbeds)</div>
         <div class="ao-amount" id="opt-direct-val">—</div>
       </div>
-      <div class="ao-sub" id="opt-direct-sub">Base rate with applicable early bird / last minute discounts</div>
+      <div class="ao-sub" id="opt-direct-sub">Base rate with applicable discounts</div>
     </div>
-
     <div class="amount-option" id="opt-beat" onclick="selectAmount('beat')">
       <div class="ao-header">
         <div class="ao-radio"><div class="ao-radio-dot"></div></div>
@@ -198,11 +193,9 @@ textarea{height:64px;padding:8px 10px;resize:none}
       </div>
       <div class="ao-sub">Enter the guest's total price seen on Booking.com or Airbnb</div>
       <div class="ao-input">
-        <input type="number" id="comp-input" placeholder="Guest's total price (Rp)" oninput="calcBeat()" onclick="selectAmount('beat')" style="height:36px">
+        <input type="number" id="comp-input" placeholder="Guest's total price (Rp)" oninput="calcBeat()" onclick="selectAmount('beat')">
       </div>
-      <div class="ao-warning" id="beat-warning"></div>
     </div>
-
     <div class="amount-option" id="opt-custom" onclick="selectAmount('custom')">
       <div class="ao-header">
         <div class="ao-radio"><div class="ao-radio-dot"></div></div>
@@ -211,29 +204,23 @@ textarea{height:64px;padding:8px 10px;resize:none}
       </div>
       <div class="ao-sub">Enter any amount freely — deposit, special rate, etc.</div>
       <div class="ao-input">
-        <input type="number" id="custom-input" placeholder="Amount (Rp)" oninput="calcCustom()" onclick="selectAmount('custom')" style="height:36px">
+        <input type="number" id="custom-input" placeholder="Amount (Rp)" oninput="calcCustom()" onclick="selectAmount('custom')">
       </div>
     </div>
-
   </div>
-
-  <!-- Payment summary bar -->
-  <div class="pay-summary" id="pay-summary">
+  <div class="pay-summary">
     <div class="pay-summary-left">
       <div class="pay-summary-label">Payment link will be generated for</div>
       <div class="pay-summary-amount" id="pay-summary-amount">—</div>
       <div class="pay-summary-sub" id="pay-summary-sub"></div>
     </div>
-    <div class="pay-summary-right">
-      <button class="btn-primary white" id="btn-generate" onclick="generatePayment()" disabled>
-        <i class="ti ti-link"></i> Generate link
-      </button>
-    </div>
+    <button class="btn-primary white" id="btn-generate" onclick="generatePayment()" disabled>
+      <i class="ti ti-link"></i> Generate link
+    </button>
   </div>
   <div class="error-box" id="gen-error"></div>
 </div>
 
-<!-- STEP 4 result -->
 <div id="payment-result-section" style="display:none">
   <div class="payment-result">
     <div style="display:flex;align-items:center;gap:8px">
@@ -246,7 +233,6 @@ textarea{height:64px;padding:8px 10px;resize:none}
       <button class="btn-copy" onclick="copyLink()"><i class="ti ti-copy"></i> Copy</button>
     </div>
   </div>
-
   <div class="summary-box">
     <div class="step-header" style="margin-bottom:12px">
       <div class="step-num active">4</div>
@@ -256,7 +242,7 @@ textarea{height:64px;padding:8px 10px;resize:none}
     <div class="sr"><span>Check-in</span><span class="sv" id="s-checkin">—</span></div>
     <div class="sr"><span>Check-out</span><span class="sv" id="s-checkout">—</span></div>
     <div class="sr"><span>Nights</span><span class="sv" id="s-nights">—</span></div>
-    <div class="sr"><span>Season</span><span class="sv" id="s-season">—</span></div>
+    <div class="sr"><span>Season(s)</span><span class="sv" id="s-season">—</span></div>
     <div class="sr"><span>Guest name</span><span class="sv" id="s-name">—</span></div>
     <div class="sr"><span>Email</span><span class="sv" id="s-email">—</span></div>
     <div class="sr"><span>Phone</span><span class="sv" id="s-phone">—</span></div>
@@ -269,12 +255,12 @@ textarea{height:64px;padding:8px 10px;resize:none}
     </div>
   </div>
 </div>
-
-</div><!-- end guest-section -->
-</div><!-- end container -->
+</div>
+</div>
 
 <script>
-const RATES={
+// Default rates (fallback if Sheet unavailable)
+let RATES={
   satu:   {low:2650000,mid:3000000,high:3600000,max:2,suite:false,display:'Bebas Satu'},
   dua:    {low:2650000,mid:3000000,high:3600000,max:2,suite:false,display:'Bebas Dua'},
   empat:  {low:4500000,mid:5300000,high:6500000,max:4,suite:false,display:'Bebas Empat'},
@@ -286,15 +272,56 @@ const RATES={
   tiga:   {low:7800000,mid:9000000,high:10200000,max:6,suite:false,display:'Bebas Tiga'},
   suite:  {low:1300000,mid:1500000,high:1900000,max:2,suite:true,display:'Bebas Suite'}
 };
-const LM=[{maxDays:1,pct:.15,label:'D-day/J-1'},{maxDays:5,pct:.15,label:'J-2 to J-5'},{maxDays:10,pct:.10,label:'J-6 to J-10'},{maxDays:15,pct:.07,label:'J-11 to J-15'},{maxDays:19,pct:.05,label:'J-16 to J-19'}];
-function getSeason(d){const md=(d.getMonth()+1)*100+d.getDate();if(md>=1215||md<=115)return'high';if(md<=330)return'low';if(md<=615)return'mid';if(md<=915)return'high';return'mid';}
+
+const LM=[{maxDays:1,pct:.15,label:'D-day/J-1'},{maxDays:5,pct:.15,label:'J-2–J-5'},{maxDays:10,pct:.10,label:'J-6–J-10'},{maxDays:15,pct:.07,label:'J-11–J-15'},{maxDays:19,pct:.05,label:'J-16–J-19'}];
+
+function getSeason(d){
+  const md=(d.getMonth()+1)*100+d.getDate();
+  if(md>=1215||md<=115)return'high';
+  if(md<=330)return'low';
+  if(md<=615)return'mid';
+  if(md<=915)return'high';
+  return'mid';
+}
 function getLM(days){for(const t of LM){if(days<=t.maxDays)return t;}return null;}
-function getEB(days){if(days>=90)return{pct:.10,label:'Early bird −10% (90+ days)'};if(days>=60)return{pct:.05,label:'Early bird −5% (60+ days)'};return null;}
+function getEB(days){if(days>=90)return{pct:.10,label:'Early bird −10%'};if(days>=60)return{pct:.05,label:'Early bird −5%'};return null;}
 function fmt(n){return'Rp\u00a0'+Math.round(n).toLocaleString('id-ID');}
 function dBetween(a,b){return Math.round((b-a)/86400000);}
 function fmtDate(s){const d=new Date(s);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtShort(d){return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});}
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+const SEASON_LABEL={high:'High',mid:'Mid',low:'Low'};
+const SEASON_CLS={high:'s-high',mid:'s-mid',low:'s-low'};
+
 let _s={};
 let _selectedMode='direct';
+
+// Load rates from Google Sheet via Apps Script
+async function loadRates(scriptUrl){
+  const loading=document.getElementById('loading-rates');
+  loading.style.display='flex';
+  try{
+    const res=await fetch(scriptUrl+'?action=rates',{redirect:'follow'});
+    const text=await res.text();
+    const data=JSON.parse(text);
+    if(data.rates){
+      Object.keys(data.rates).forEach(villa=>{
+        if(RATES[villa]){
+          const r=data.rates[villa];
+          RATES[villa].low=parseInt(r.low)||RATES[villa].low;
+          RATES[villa].mid=parseInt(r.mid)||RATES[villa].mid;
+          RATES[villa].high=parseInt(r.high)||RATES[villa].high;
+          RATES[villa].max=parseInt(r.max)||RATES[villa].max;
+        }
+      });
+      loading.style.display='none';
+      document.getElementById('script-saved').textContent=' URL saved · Rates loaded from Sheet ✓';
+      render();
+    }
+  }catch(e){
+    loading.style.display='none';
+  }
+}
 
 function saveScriptUrl(){
   const url=document.getElementById('apps-script-url').value.trim();
@@ -302,6 +329,7 @@ function saveScriptUrl(){
   if(url.startsWith('https://script.google.com')){
     saved.style.display='flex';
     localStorage.setItem('bebas_script_url',url);
+    loadRates(url);
   } else {
     saved.style.display='none';
   }
@@ -310,22 +338,54 @@ function saveScriptUrl(){
 
 window.addEventListener('DOMContentLoaded',()=>{
   const saved=localStorage.getItem('bebas_script_url');
-  if(saved){document.getElementById('apps-script-url').value=saved;saveScriptUrl();}
+  if(saved){
+    document.getElementById('apps-script-url').value=saved;
+    document.getElementById('script-saved').style.display='flex';
+    loadRates(saved);
+    updateGenerateBtn();
+  }
 });
+
+// Calculate night-by-night breakdown
+function calcNights(ciDate, coDate, r, isSuite, ahead, eb, lm){
+  const nights=[];
+  let d=new Date(ciDate);
+  while(d<coDate){
+    const season=getSeason(d);
+    const baseRate=r[season];
+    let rate=baseRate;
+    if(!isSuite){
+      if(eb) rate=Math.round(rate*(1-eb.pct));
+      if(lm) rate=Math.round(rate*(1-lm.pct));
+    }
+    nights.push({date:new Date(d),season,baseRate,rate});
+    d=addDays(d,1);
+  }
+  return nights;
+}
+
+function nightsTotal(nights){return nights.reduce((s,n)=>s+n.rate,0);}
+
+function buildNightDetail(nights, markup, weekDiscount){
+  let rows='';
+  nights.forEach(n=>{
+    const displayRate=markup?Math.round(n.rate*markup*(weekDiscount?0.9:1)):n.rate;
+    rows+=`<div class="night-row">
+      <span class="night-date">${fmtShort(n.date)}</span>
+      <span class="night-season"><span class="badge ${SEASON_CLS[n.season]}" style="font-size:10px;padding:1px 6px">${SEASON_LABEL[n.season]}</span></span>
+      <span class="night-price">${fmt(displayRate)}</span>
+    </div>`;
+  });
+  return rows;
+}
 
 function validateGuests(){
   const v=parseInt(document.getElementById('g-guests').value);
   const max=_s.r?_s.r.max:2;
   const inp=document.getElementById('g-guests');
   const err=document.getElementById('err-guests');
-  if(v>max){
-    inp.classList.add('err');
-    err.textContent=`Max ${max} guests for this villa`;
-    err.style.display='block';
-  } else {
-    inp.classList.remove('err');
-    err.style.display='none';
-  }
+  if(v>max){inp.classList.add('err');err.textContent=`Max ${max} guests for this villa`;err.style.display='block';}
+  else{inp.classList.remove('err');err.style.display='none';}
 }
 
 function selectAmount(mode){
@@ -333,18 +393,15 @@ function selectAmount(mode){
   ['direct','beat','custom'].forEach(m=>{
     document.getElementById('opt-'+m).classList.toggle('selected',m===mode);
   });
-  updateSummaryBar();
-  updateGenerateBtn();
+  updateSummaryBar();updateGenerateBtn();
 }
 
 function calcBeat(){
   const val=parseFloat(document.getElementById('comp-input').value);
-  const warn=document.getElementById('beat-warning');
   const valEl=document.getElementById('opt-beat-val');
-  if(!val||isNaN(val)){valEl.textContent='—';valEl.style.color='#888';warn.style.display='none';updateSummaryBar();return;}
+  if(!val||isNaN(val)){valEl.textContent='—';valEl.style.color='#888';updateSummaryBar();return;}
   const offer=Math.round(val*0.95);
   valEl.textContent=fmt(offer);valEl.style.color='#1D9E75';
-  warn.style.display='none';
   if(_selectedMode==='beat'){updateSummaryBar();updateGenerateBtn();}
 }
 
@@ -374,22 +431,17 @@ function updateSummaryBar(){
   const amount=getFinalAmount();
   const amountEl=document.getElementById('pay-summary-amount');
   const subEl=document.getElementById('pay-summary-sub');
-  if(!amount){
-    amountEl.textContent='—';
-    subEl.textContent='Enter an amount above';
-  } else {
-    amountEl.textContent=fmt(amount);
-    const perN=_s.n?fmt(Math.round(amount/_s.n))+'/night':' ';
-    const modeLabel={direct:'Direct Cloudbeds rate',beat:'Competitor price −5%',custom:'Custom amount'}[_selectedMode];
-    subEl.textContent=modeLabel+(_s.n?' · '+perN:'');
-  }
+  if(!amount){amountEl.textContent='—';subEl.textContent='Enter an amount above';return;}
+  amountEl.textContent=fmt(amount);
+  const modeLabel={direct:'Direct Cloudbeds rate',beat:'Competitor −5%',custom:'Custom amount'}[_selectedMode];
+  const perN=_s.n?fmt(Math.round(amount/_s.n))+'/night avg':' ';
+  subEl.textContent=modeLabel+(_s.n?' · '+perN:'');
 }
 
 function updateGenerateBtn(){
   const url=document.getElementById('apps-script-url').value.trim();
   const amount=getFinalAmount();
-  const btn=document.getElementById('btn-generate');
-  btn.disabled=!(url.startsWith('https://script.google.com')&&amount&&amount>0);
+  document.getElementById('btn-generate').disabled=!(url.startsWith('https://script.google.com')&&amount&&amount>0);
 }
 
 function render(){
@@ -409,50 +461,49 @@ function render(){
   const n=dBetween(ciD,coD);
   const today=new Date();today.setHours(0,0,0,0);
   const ahead=dBetween(today,ciD);
-  const season=getSeason(ciD);
   const r=RATES[villa];
   const isSuite=r.suite;
-  const base=r[season];
-  const sLabel={high:'High season',mid:'Mid season',low:'Low season'}[season];
-  const sCls={high:'s-high',mid:'s-mid',low:'s-low'}[season];
-  strip.innerHTML=`<span class="badge b-gray"><i class="ti ti-moon" style="font-size:13px;vertical-align:-2px;margin-right:3px"></i>${n} night${n>1?'s':''}</span><span class="badge b-gray"><i class="ti ti-clock" style="font-size:13px;vertical-align:-2px;margin-right:3px"></i>${ahead} days ahead</span><span class="badge ${sCls}">${sLabel}</span>`;
-
-  // Direct rate
   const lm=isSuite?null:getLM(ahead);
   const eb=isSuite?null:getEB(ahead);
-  let directRate=base;
-  if(eb) directRate=Math.round(directRate*(1-eb.pct));
-  if(lm) directRate=Math.round(directRate*(1-lm.pct));
-  const directTotal=directRate*n;
 
-  // Booking.com: markup on post-LM rate
-  const bkBase=Math.round(directRate*1.18);
+  // Get unique seasons for this stay
+  const seasonSet=new Set();
+  let d=new Date(ciD);
+  while(d<coD){seasonSet.add(getSeason(d));d=addDays(d,1);}
+  const seasonBadges=[...seasonSet].map(s=>`<span class="badge ${SEASON_CLS[s]}">${SEASON_LABEL[s]} season</span>`).join(' ');
+
+  strip.innerHTML=`<span class="badge b-gray"><i class="ti ti-moon" style="font-size:13px;vertical-align:-2px;margin-right:3px"></i>${n} night${n>1?'s':''}</span><span class="badge b-gray"><i class="ti ti-clock" style="font-size:13px;vertical-align:-2px;margin-right:3px"></i>${ahead} days ahead</span>${seasonBadges}`;
+
+  // Night-by-night for direct
+  const directNights=calcNights(ciD,coD,r,isSuite,ahead,eb,lm);
+  const directTotal=nightsTotal(directNights);
+
+  // Night-by-night for Booking.com (markup on each night's direct rate)
+  const bkNights=directNights.map(n=>({...n,rate:Math.round(n.rate*1.18)}));
   const bkEb=isSuite?null:getEB(ahead);
-  const bkAfterEb=bkEb?Math.round(bkBase*(1-bkEb.pct)):bkBase;
-  const bkMinRate=isSuite?bkBase:Math.round(bkAfterEb*0.9*0.9);
-  const bkMaxTotal=bkAfterEb*n;
-  const bkMinTotal=bkMinRate*n;
+  const bkNightsAfterEb=bkEb?bkNights.map(n=>({...n,rate:Math.round(n.rate*(1-bkEb.pct))})):bkNights;
+  const bkMaxTotal=bkNightsAfterEb.reduce((s,n)=>s+n.rate,0);
+  const bkMinNights=isSuite?bkNights:bkNightsAfterEb.map(n=>({...n,rate:Math.round(n.rate*0.9*0.9)}));
+  const bkMinTotal=bkMinNights.reduce((s,n)=>s+n.rate,0);
 
-  // Airbnb: markup on post-LM rate
-  const airBase=Math.round(directRate*1.15);
-  const airWeek=(!isSuite&&n>=7)?0.10:0;
-  const airRate=Math.round(airBase*(1-airWeek));
-  const airTotal=airRate*n;
+  // Night-by-night for Airbnb (markup on each night's direct rate)
+  const airWeek=(!isSuite&&n>=7);
+  const airNights=directNights.map(n=>({...n,rate:Math.round(n.rate*1.15*(airWeek?0.9:1))}));
+  const airTotal=airNights.reduce((s,n)=>s+n.rate,0);
 
   const directBest=directTotal<=bkMinTotal&&directTotal<=airTotal;
 
-  _s={directTotal,bkMinTotal,bkMaxTotal,airTotal,n,villa,ci,co,season:sLabel,base,directRate,isSuite,ahead,eb,lm,r};
+  _s={directTotal,bkMinTotal,bkMaxTotal,airTotal,n,villa,ci,co,season:[...seasonSet].map(s=>SEASON_LABEL[s]+' season').join(' + '),r,isSuite,ahead,eb,lm};
 
-  // Update guests max label
-  document.getElementById('guests-max-label').textContent='(max '+r.max+')';
   document.getElementById('g-guests').max=r.max;
-
-  // Update direct option
+  document.getElementById('guests-max-label').textContent='(max '+r.max+')';
   document.getElementById('opt-direct-val').textContent=fmt(directTotal);
   document.getElementById('opt-direct-sub').textContent=
-    (eb?eb.label+' applied · ':'')+
-    (lm?'Last min. discount ('+lm.label+') applied · ':'')+
-    fmt(directRate)+'/night · '+n+' nights';
+    (eb?eb.label+' · ':'')+
+    (lm?'Last min. ('+lm.label+') · ':'')+
+    'Avg '+fmt(Math.round(directTotal/n))+'/night';
+
+  const discountNote=isSuite?`<div class="dr"><span>No promotions</span><span class="dv">—</span></div>`:'';
 
   out.innerHTML=`
 <div class="channels">
@@ -463,50 +514,58 @@ function render(){
       ${directBest?'<span class="best-badge">Best price</span>':''}
     </div>
     <div class="price-total">${fmt(directTotal)}</div>
-    <div class="price-night">${fmt(directRate)}/night · ${n} night${n>1?'s':''}</div>
-    <div class="dr"><span>Base rate (${sLabel})</span><span class="dv">${fmt(base)}</span></div>
-    ${eb?`<div class="dr"><span>${eb.label}</span><span class="dv-g">−${Math.round(eb.pct*100)}%</span></div>`:''}
-    ${lm?`<div class="dr"><span>Last min. (${lm.label})</span><span class="dv-r">−${Math.round(lm.pct*100)}%</span></div>`:''}
-    ${isSuite?`<div class="dr"><span>No promotions</span><span class="dv">—</span></div>`:''}
-    <div class="dr" style="font-weight:500;color:#1a1a1a"><span>Total</span><span>${fmt(directTotal)}</span></div>
+    <div class="price-night">Avg ${fmt(Math.round(directTotal/n))}/night · ${n} night${n>1?'s':''}</div>
+    ${eb?`<div class="dr"><span>${eb.label}</span><span class="dv-g">Applied</span></div>`:''}
+    ${lm?`<div class="dr"><span>Last min. (${lm.label})</span><span class="dv-r">Applied</span></div>`:''}
+    ${discountNote}
+    <div class="night-detail">
+      <div class="night-detail-title">Night breakdown</div>
+      ${buildNightDetail(directNights,null,false)}
+      <div class="night-total-row"><span>Total</span><span>${fmt(directTotal)}</span></div>
+    </div>
   </div>
+
   <div class="ch-card">
     <div class="ch-head">
       <div class="ch-icon" style="background:#E8F3FE"><i class="ti ti-building-store" style="color:#185FA5"></i></div>
-      <div><div class="ch-name">Booking.com</div><div class="ch-sub">+18% on direct rate</div></div>
+      <div><div class="ch-name">Booking.com</div><div class="ch-sub">+18% markup per night</div></div>
     </div>
     <div class="price-total">${fmt(bkMaxTotal)}</div>
-    <div class="price-night">Max: ${fmt(bkAfterEb)}/night &nbsp;·&nbsp; <span style="color:#C0392B">Min: ${fmt(bkMinRate)}/night</span></div>
-    <div class="dr"><span>After markup (+18%)</span><span class="dv">${fmt(bkBase)}</span></div>
-    ${bkEb&&!isSuite?`<div class="dr"><span>${bkEb.label}</span><span class="dv-g">−${Math.round(bkEb.pct*100)}%</span></div>`:`<div class="dr"><span>No early bird</span><span class="dv">—</span></div>`}
-    ${!isSuite?`<div class="dr"><span>+ Genius −10%</span><span class="dv-r">−10%</span></div><div class="dr"><span>+ Mobile −10%</span><span class="dv-r">−10%</span></div>`:''}
-    <div class="dr"><span>Max total</span><span class="dv">${fmt(bkMaxTotal)}</span></div>
-    <div class="dr" style="color:#C0392B"><span>Min total</span><span class="dv-r">${fmt(bkMinTotal)}</span></div>
+    <div class="price-night">Max total · <span style="color:#C0392B">Min: ${fmt(bkMinTotal)}</span></div>
+    ${bkEb&&!isSuite?`<div class="dr"><span>${bkEb.label}</span><span class="dv-g">Applied</span></div>`:`<div class="dr"><span>No early bird</span><span class="dv">—</span></div>`}
+    ${!isSuite?`<div class="dr"><span>+ Genius −10% + Mobile −10%</span><span class="dv-r">Min: ${fmt(bkMinTotal)}</span></div>`:''}
+    <div class="night-detail">
+      <div class="night-detail-title">Night breakdown (max rate)</div>
+      ${buildNightDetail(bkNightsAfterEb,null,false)}
+      <div class="night-total-row"><span>Max total</span><span>${fmt(bkMaxTotal)}</span></div>
+    </div>
   </div>
+
   <div class="ch-card">
     <div class="ch-head">
       <div class="ch-icon" style="background:#FEF3E2"><i class="ti ti-brand-airbnb" style="color:#854F0B"></i></div>
-      <div><div class="ch-name">Airbnb</div><div class="ch-sub">+15% on direct rate</div></div>
+      <div><div class="ch-name">Airbnb</div><div class="ch-sub">+15% markup per night</div></div>
     </div>
     <div class="price-total">${fmt(airTotal)}</div>
-    <div class="price-night">${fmt(airRate)}/night · ${n} night${n>1?'s':''}</div>
-    <div class="dr"><span>After markup (+15%)</span><span class="dv">${fmt(airBase)}</span></div>
-    <div class="dr"><span>Weekly discount (7+ nights)</span><span class="${airWeek?'dv-g':'dv'}">${airWeek?'−10%':'—'}</span></div>
-    <div class="dr" style="font-weight:500;color:#1a1a1a"><span>Total</span><span>${fmt(airTotal)}</span></div>
+    <div class="price-night">Avg ${fmt(Math.round(airTotal/n))}/night · ${n} night${n>1?'s':''}</div>
+    <div class="dr"><span>Weekly discount (7+ nights)</span><span class="${airWeek?'dv-g':'dv'}">${airWeek?'−10% applied':'—'}</span></div>
+    <div class="night-detail">
+      <div class="night-detail-title">Night breakdown</div>
+      ${buildNightDetail(airNights,null,false)}
+      <div class="night-total-row"><span>Total</span><span>${fmt(airTotal)}</span></div>
+    </div>
   </div>
 </div>`;
 
   gs.style.display='block';
   document.getElementById('payment-result-section').style.display='none';
-  updateSummaryBar();
-  updateGenerateBtn();
-  // reset beat/custom inputs
   document.getElementById('comp-input').value='';
   document.getElementById('custom-input').value='';
   document.getElementById('opt-beat-val').textContent='—';document.getElementById('opt-beat-val').style.color='#888';
   document.getElementById('opt-custom-val').textContent='—';document.getElementById('opt-custom-val').style.color='#888';
-  document.getElementById('beat-warning').style.display='none';
   selectAmount('direct');
+  updateSummaryBar();
+  updateGenerateBtn();
 }
 
 async function generatePayment(){
@@ -517,7 +576,6 @@ async function generatePayment(){
   const remarks=document.getElementById('g-remarks').value.trim();
   const errBox=document.getElementById('gen-error');
   errBox.style.display='none';
-  // Validate
   let valid=true;
   if(!name){document.getElementById('g-name').classList.add('err');document.getElementById('err-name').style.display='block';valid=false;}
   else{document.getElementById('g-name').classList.remove('err');document.getElementById('err-name').style.display='none';}
@@ -561,7 +619,7 @@ async function generatePayment(){
     document.getElementById('payment-result-section').style.display='block';
     document.getElementById('payment-result-section').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){
-    errBox.textContent='Error: '+e.message+'. Check your Apps Script URL and Xendit key.';
+    errBox.textContent='Error: '+e.message;
     errBox.style.display='block';
   }
   btn.disabled=false;btn.innerHTML='<i class="ti ti-link"></i> Generate link';
@@ -577,7 +635,7 @@ function copyLink(){
 }
 function copySummary(){
   const fields=['villa','checkin','checkout','nights','season','name','email','phone','guests','total','remarks','link'];
-  const labels={villa:'Villa',checkin:'Check-in',checkout:'Check-out',nights:'Nights',season:'Season',name:'Guest name',email:'Email',phone:'Phone',guests:'Guests',total:'Total',remarks:'Remarks',link:'Payment link'};
+  const labels={villa:'Villa',checkin:'Check-in',checkout:'Check-out',nights:'Nights',season:'Season(s)',name:'Guest name',email:'Email',phone:'Phone',guests:'Guests',total:'Total',remarks:'Remarks',link:'Payment link'};
   let txt='BEBAS VILLAS — RESERVATION SUMMARY\n'+'─'.repeat(36)+'\n';
   fields.forEach(f=>{txt+=labels[f]+': '+document.getElementById('s-'+f).textContent+'\n';});
   navigator.clipboard.writeText(txt).then(()=>{
