@@ -97,6 +97,17 @@ textarea{height:64px;padding:8px 10px;resize:none}
 .error-box{background:#FDECEA;border:1px solid #F5A8A8;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:#C0392B;margin-top:10px;display:none}
 .field-err{font-size:11px;color:#C0392B;margin-top:3px;display:none}
 .season-legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.express-card{background:#fff;border:1.5px dashed #C8C4BC;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.express-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.express-icon{width:32px;height:32px;border-radius:8px;background:#F8F7F4;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.express-title{font-size:14px;font-weight:500}
+.express-sub{font-size:12px;color:#888;margin-top:1px}
+.express-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:4px}
+.express-result{background:#F8F7F4;border-radius:8px;padding:.6rem 1rem;display:flex;align-items:center;justify-content:space-between;margin:10px 0 12px;min-height:42px}
+.express-result-label{font-size:12px;color:#888}
+.express-result-amount{font-size:18px;font-weight:500;color:#1D9E75}
+.express-link-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+.express-link-result{background:#E8F7EF;border:1px solid #9FE1CB;border-radius:8px;padding:.75rem 1rem;margin-top:10px;display:none}
 </style>
 </head>
 <body>
@@ -107,6 +118,45 @@ textarea{height:64px;padding:8px 10px;resize:none}
     <div class="header-sub">Compare rates · Set payment amount · Generate Xendit link</div>
   </div>
   <div class="logo">Bebas Villas</div>
+</div>
+
+<div class="express-card">
+  <div class="express-header">
+    <div class="express-icon"><i class="ti ti-bolt" style="font-size:18px;color:#854F0B"></i></div>
+    <div>
+      <div class="express-title">Express payment link</div>
+      <div class="express-sub">Services, deposits, custom invoices &mdash; +3% bank fee applied automatically</div>
+    </div>
+  </div>
+  <div class="express-row">
+    <div class="field" style="flex:1;min-width:180px">
+      <label>Amount (Rp)</label>
+      <input type="number" id="exp-amount" placeholder="e.g. 500000" oninput="calcExpress()">
+    </div>
+    <div class="field" style="flex:2;min-width:220px">
+      <label>Description</label>
+      <input type="text" id="exp-desc" placeholder="e.g. Spa treatment, Airport transfer...">
+    </div>
+  </div>
+  <div class="express-result">
+    <span class="express-result-label" id="exp-result-label">Enter an amount to see total</span>
+    <span class="express-result-amount" id="exp-result-amount"></span>
+  </div>
+  <button class="btn-primary" id="btn-express" onclick="generateExpress()" disabled style="width:100%;justify-content:center">
+    <i class="ti ti-link"></i> Generate express link
+  </button>
+  <div class="error-box" id="exp-error"></div>
+  <div class="express-link-result" id="exp-link-result">
+    <div style="display:flex;align-items:center;gap:8px">
+      <i class="ti ti-circle-check" style="color:#0F6E56;font-size:18px"></i>
+      <span style="font-weight:500;font-size:13px;color:#085041">Link generated</span>
+      <span style="font-size:11px;color:#3B6D11;margin-left:auto" id="exp-link-expiry"></span>
+    </div>
+    <div class="express-link-row">
+      <span class="link-val" id="exp-link-val">--</span>
+      <button class="btn-copy" onclick="copyExpressLink()"><i class="ti ti-copy"></i> Copy</button>
+    </div>
+  </div>
 </div>
 
 <div class="script-config">
@@ -642,6 +692,62 @@ function copySummary(){
     const btn=event.target.closest('button');
     btn.innerHTML='<i class="ti ti-check"></i> Copied';
     setTimeout(()=>{btn.innerHTML='<i class="ti ti-clipboard"></i> Copy full summary';},2000);
+  });
+}
+function calcExpress(){
+  const val=parseFloat(document.getElementById('exp-amount').value);
+  const lbl=document.getElementById('exp-result-label');
+  const amtEl=document.getElementById('exp-result-amount');
+  const btn=document.getElementById('btn-express');
+  if(!val||isNaN(val)||val<=0){
+    lbl.textContent='Enter an amount to see total';
+    amtEl.textContent='';
+    btn.disabled=true;
+    return;
+  }
+  const total=Math.round(val*1.03);
+  lbl.textContent='Guest will be charged (incl. +3% bank fee)';
+  amtEl.textContent=fmt(total);
+  btn.disabled=false;
+}
+
+async function generateExpress(){
+  const val=parseFloat(document.getElementById('exp-amount').value);
+  const desc=document.getElementById('exp-desc').value.trim();
+  const errBox=document.getElementById('exp-error');
+  errBox.style.display='none';
+  if(!val||isNaN(val)||val<=0){errBox.textContent='Please enter a valid amount.';errBox.style.display='block';return;}
+  if(!desc){errBox.textContent='Please enter a description.';errBox.style.display='block';return;}
+  const scriptUrl=document.getElementById('apps-script-url').value.trim();
+  if(!scriptUrl.startsWith('https://script.google.com')){errBox.textContent='Apps Script URL not configured above.';errBox.style.display='block';return;}
+  const total=Math.round(val*1.03);
+  const btn=document.getElementById('btn-express');
+  btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2"></i> Generating...';
+  try{
+    const payload={amount:total,description:desc,externalId:'BEBAS-EXP-'+Date.now(),payerEmail:'',payerName:'',payerPhone:''};
+    const url=scriptUrl+'?data='+encodeURIComponent(JSON.stringify(payload));
+    const res=await fetch(url,{method:'GET',redirect:'follow'});
+    const text=await res.text();
+    let data;
+    try{data=JSON.parse(text);}catch(pe){throw new Error('Invalid response');}
+    if(data.error)throw new Error(data.error);
+    const link=data.invoice_url||data.url||data.checkout_url;
+    if(!link)throw new Error('No payment URL returned');
+    document.getElementById('exp-link-val').textContent=link;
+    const exp=new Date(Date.now()+12*3600000);
+    document.getElementById('exp-link-expiry').textContent='Expires '+exp.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('exp-link-result').style.display='block';
+  }catch(e){
+    errBox.textContent='Error: '+e.message;errBox.style.display='block';
+  }
+  btn.disabled=false;btn.innerHTML='<i class="ti ti-link"></i> Generate express link';
+}
+
+function copyExpressLink(){
+  navigator.clipboard.writeText(document.getElementById('exp-link-val').textContent).then(()=>{
+    const btn=event.target.closest('button');
+    btn.innerHTML='<i class="ti ti-check"></i> Copied';
+    setTimeout(()=>{btn.innerHTML='<i class="ti ti-copy"></i> Copy';},2000);
   });
 }
 </script>
