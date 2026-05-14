@@ -138,6 +138,20 @@ textarea{height:64px;padding:8px 10px;resize:none}
       <input type="text" id="exp-desc" placeholder="e.g. Spa treatment, Airport transfer...">
     </div>
   </div>
+  <div class="express-row" style="margin-top:8px">
+    <div class="field" style="flex:1;min-width:160px">
+      <label>Guest name <span style="color:#aaa;font-weight:400">(optional)</span></label>
+      <input type="text" id="exp-name" placeholder="e.g. Jean Dupont">
+    </div>
+    <div class="field" style="flex:1;min-width:160px">
+      <label>Email <span style="color:#aaa;font-weight:400">(optional)</span></label>
+      <input type="email" id="exp-email" placeholder="e.g. jean@email.com">
+    </div>
+    <div class="field" style="flex:1;min-width:140px">
+      <label>Phone <span style="color:#aaa;font-weight:400">(optional)</span></label>
+      <input type="tel" id="exp-phone" placeholder="e.g. +33612345678">
+    </div>
+  </div>
   <div class="express-result">
     <span class="express-result-label" id="exp-result-label">Enter an amount to see total</span>
     <span class="express-result-amount" id="exp-result-amount"></span>
@@ -701,10 +715,13 @@ async function generateExpress(){
   const scriptUrl=document.getElementById('apps-script-url').value.trim();
   if(!scriptUrl.startsWith('https://script.google.com')){errBox.textContent='Apps Script URL not configured above.';errBox.style.display='block';return;}
   const total=Math.round(val*1.03);
+  const expName=document.getElementById('exp-name').value.trim()||'Guest';
+  const expEmail=document.getElementById('exp-email').value.trim()||'guest@bebas-villas.com';
+  const expPhone=document.getElementById('exp-phone').value.trim()||'+6200000000';
   const btn=document.getElementById('btn-express');
   btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2"></i> Generating...';
   try{
-    const payload={amount:total,description:desc,externalId:'BEBAS-EXP-'+Date.now(),payerEmail:'',payerName:'',payerPhone:''};
+    const payload={amount:total,description:desc,externalId:'BEBAS-EXP-'+Date.now(),payerEmail:expEmail,payerName:expName,payerPhone:expPhone};
     const url=scriptUrl+'?data='+encodeURIComponent(JSON.stringify(payload));
     const res=await fetch(url,{method:'GET',redirect:'follow'});
     const text=await res.text();
